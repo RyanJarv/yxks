@@ -1,0 +1,4 @@
+[submodule "tests/aws-kms-xksproxy-test-client"]
+  path = tests/aws-kms-xksproxy-test-client
+  url = https://github.com/aws-samples/aws-kms-xksproxy-test-client.git
+
