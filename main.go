@@ -30,10 +30,16 @@ func main() {
 }
 
 func RunServer(ctx utils.Context) error {
-	http.HandleFunc("/kms/xks/v1/health", handlers.HealthHandler)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadataHandler)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.EncryptHandler)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.DecryptHandler)
+	router := http.NewServeMux()
+	s := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
+	router.HandleFunc("/kms/xks/v1/health", handlers.HealthHandler)
+	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadataHandler)
+	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.EncryptHandler)
+	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.DecryptHandler)
+	router.HandleFunc("/", handlers.GetDefaultHandler(ctx))
 
-	return http.ListenAndServe("localhost:8080", nil)
+	return s.ListenAndServe()
 }

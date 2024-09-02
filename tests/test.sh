@@ -2,7 +2,8 @@
 
 # Get the local IP address, probably on works on MacOS
 local_ip=$(ifconfig|grep 'inet '|grep 'broadcast'|awk '{print $2}')
-export XKS_PROXY_HOST=$local_ip
+export XKS_PROXY_HOST="${local_ip}:8080"
+export SCHEME="http://"
 
 # Change this to the URI_PREFIX of a logical keystore supported by your XKS Proxy.
 export URI_PREFIX="example/uri/path/prefix"
@@ -24,24 +25,4 @@ cd "$current_dir/aws-kms-xksproxy-test-client"
 
 
 # Run the tests
-./test-xks-proxy-via-docker ENCRYPT_ONLY_KEY_ID
-#./test_encrypt_only_key
-
-## Run all the tests including the use of encrypt-only key, decrypt-only key and
-## key that can neither encrypt nor decrypt. You can specify the respective key id's with
-## the environment variables ENCRYPT_ONLY_KEY_ID, DECRYPT_ONLY_KEY_ID and IMPOTENT_KEY_ID.
-#./test-xks-proxy -a
-#
-## Run all the tests in debug mode, printing the actual curl commands
-#DEBUG=1 ./test-xks-proxy
-#
-## To test against the endpoint http://xks-proxy.mydomain.com
-#XKS_PROXY_HOST=xks-proxy.mydomain.com \
-#    SCHEME= \
-#    ./test-xks-proxy
-#
-## To enable mTLS, a client side SSL key and certificate would need to be specified.
-## The command to run the tests would be something like:
-#XKS_PROXY_HOST=xks-proxy_with_mtls_enabled.mydomain.com \
-#   MTLS="--key client_key.pem --cert client_cert.pem" \
-#   ./test-xks-proxy
+./test-xks-proxy-via-docker
