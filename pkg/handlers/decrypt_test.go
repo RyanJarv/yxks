@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestDecrypt(t *testing.T) {
+func TestDecryptHandler(t *testing.T) {
 	type args struct {
 		w   http.ResponseWriter
 		req *http.Request
@@ -19,14 +19,14 @@ func TestDecrypt(t *testing.T) {
 		wantResp   string
 	}{
 		{
-			name: "Test Health",
+			name: "Test HealthHandler",
 			args: args{
 				w: httptest.NewRecorder(),
 				req: httptest.NewRequest(http.MethodPost, "/kms/xks/v1/health", bytes.NewBuffer([]byte(`{
     "requestMetadata": { 
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
         "kmsKeyArn": "arn:aws:kms:us-east-2:123456789012:/key/1234abcd-12ab-34cd-56ef-1234567890ab",
-        "kmsOperation": "Decrypt",
+        "kmsOperation": "DecryptHandler",
         "kmsRequestId": "5112f4d6-db54-4af4-ae30-c55a22a8dfae",
         "kmsViaService": "ebs"
     },
@@ -46,13 +46,13 @@ func TestDecrypt(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Decrypt(tt.args.w, tt.args.req)
+			DecryptHandler(tt.args.w, tt.args.req)
 			if tt.args.w.(*httptest.ResponseRecorder).Code != tt.wantStatus {
-				t.Errorf("Health Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
+				t.Errorf("HealthHandler Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
 			}
 
 			if tt.args.w.(*httptest.ResponseRecorder).Body.String() != tt.wantResp {
-				t.Errorf("Health Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
+				t.Errorf("HealthHandler Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
 			}
 		})
 	}

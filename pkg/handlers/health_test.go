@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestHealth(t *testing.T) {
+func TestHealthHandler(t *testing.T) {
 	type args struct {
 		w   http.ResponseWriter
 		req *http.Request
@@ -19,7 +19,7 @@ func TestHealth(t *testing.T) {
 		wantResp   string
 	}{
 		{
-			name: "Test Health",
+			name: "Test HealthHandler",
 			args: args{
 				w: httptest.NewRecorder(),
 				req: httptest.NewRequest(http.MethodPost, "/kms/xks/v1/health", bytes.NewBuffer([]byte(`{
@@ -52,13 +52,13 @@ func TestHealth(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			Health(tt.args.w, tt.args.req)
+			HealthHandler(tt.args.w, tt.args.req)
 			if tt.args.w.(*httptest.ResponseRecorder).Code != tt.wantStatus {
-				t.Errorf("Health Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
+				t.Errorf("HealthHandler Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
 			}
 
 			if tt.args.w.(*httptest.ResponseRecorder).Body.String() != tt.wantResp {
-				t.Errorf("Health Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
+				t.Errorf("HealthHandler Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
 			}
 		})
 	}

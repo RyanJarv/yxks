@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-// GetKeyMetadata endpoint
+// GetKeyMetadataHandler endpoint
 // URI: /kms/xks/v1/keys/{externalKeyId}/metadata
-func GetKeyMetadata(w http.ResponseWriter, req *http.Request) {
+func GetKeyMetadataHandler(w http.ResponseWriter, req *http.Request) {
 	extKeyId := utils.GetExternalKeyId(req)
 	lo.Must(fmt.Fprintf(w, "Getting %s metadata: %+v", extKeyId, req))
 }

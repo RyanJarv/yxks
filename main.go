@@ -1,8 +1,8 @@
 // Implements a kms xks server that implements the following APIs:
 //
-//	GetKeyMetadata: /kms/xks/v1/keys/<externalKeyId>/metadata
+//	GetKeyMetadataHandler: /kms/xks/v1/keys/<externalKeyId>/metadata
 //	Encrypt: /kms/xks/v1/keys/<externalKeyId>/encrypt
-//	Decrypt: /kms/xks/v1/keys/<externalKeyId>/decrypt
+//	DecryptHandler: /kms/xks/v1/keys/<externalKeyId>/decrypt
 //	GetHealthStatus: /kms/xks/v1/health
 package main
 
@@ -30,10 +30,10 @@ func main() {
 }
 
 func RunServer(ctx utils.Context) error {
-	http.HandleFunc("/kms/xks/v1/health", handlers.Health)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadata)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.Encrypt)
-	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.Decrypt)
+	http.HandleFunc("/kms/xks/v1/health", handlers.HealthHandler)
+	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadataHandler)
+	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.EncryptHandler)
+	http.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.DecryptHandler)
 
 	return http.ListenAndServe("localhost:8080", nil)
 }

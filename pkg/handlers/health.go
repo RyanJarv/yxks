@@ -6,9 +6,9 @@ import (
 	"net/http"
 )
 
-// Health endpoint
+// HealthHandler endpoint
 // URI: /kms/xks/v1/health
-func Health(w http.ResponseWriter, req *http.Request) {
+func HealthHandler(w http.ResponseWriter, req *http.Request) {
 	resp := `{
     "xksProxyFleetSize": 2,
     "xksProxyVendor": "Acme Corp",

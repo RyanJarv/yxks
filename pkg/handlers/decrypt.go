@@ -7,9 +7,9 @@ import (
 	"net/http"
 )
 
-// Decrypt endpoint
+// DecryptHandler endpoint
 // URI: /kms/xks/v1/keys/{externalKeyId}/decrypt
-func Decrypt(w http.ResponseWriter, req *http.Request) {
+func DecryptHandler(w http.ResponseWriter, req *http.Request) {
 	extKeyId := utils.GetExternalKeyId(req)
 	lo.Must(fmt.Fprintf(w, "Decrypting with %s: %v", extKeyId, req))
 }

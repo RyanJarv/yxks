@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestGetKeyMetadata(t *testing.T) {
+func TestGetKeyMetadataHandler(t *testing.T) {
 	type args struct {
 		w   http.ResponseWriter
 		req *http.Request
@@ -19,7 +19,7 @@ func TestGetKeyMetadata(t *testing.T) {
 		wantResp   string
 	}{
 		{
-			name: "Test Health",
+			name: "Test HealthHandler",
 			args: args{
 				w: httptest.NewRecorder(),
 				req: httptest.NewRequest(http.MethodPost, "/kms/xks/v1/health", bytes.NewBuffer([]byte(`{
@@ -48,13 +48,13 @@ func TestGetKeyMetadata(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			GetKeyMetadata(tt.args.w, tt.args.req)
+			GetKeyMetadataHandler(tt.args.w, tt.args.req)
 			if tt.args.w.(*httptest.ResponseRecorder).Code != tt.wantStatus {
-				t.Errorf("Health Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
+				t.Errorf("HealthHandler Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
 			}
 
 			if tt.args.w.(*httptest.ResponseRecorder).Body.String() != tt.wantResp {
-				t.Errorf("Health Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
+				t.Errorf("HealthHandler Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
 			}
 		})
 	}
