@@ -1,5 +1,14 @@
 # YXKS
 
+## Running tests
+
+```
+make init
+./tests/test.sh
+```
+
+NOTE: the test.sh script trys to find the local ip of your host, if testing isn't working maybe check that. You can probably change this to localhost if you are on linux.
+
 
 ## Generate shared secret
 
