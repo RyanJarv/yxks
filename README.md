@@ -22,6 +22,7 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/metadata
 
 ### Request
 
+```
 {
     "requestMetadata": {
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
@@ -29,10 +30,12 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/metadata
         "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae"
     }
 }
+```
 
 
 ### Response
 
+```
 {
     "requestMetadata": {
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
@@ -46,6 +49,7 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/metadata
     "encryptionAlgorithm": "AES_GCM",
     "ciphertextDataIntegrityValueAlgorithm": "SHA_256"
 }
+```
 
 
 ## Encrypt -- xks_proxy_api_spec.md
@@ -54,6 +58,8 @@ HTTP Method: POST
 URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/encrypt
 
 ### Request
+
+```
 {
     "requestMetadata": {
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
@@ -67,10 +73,12 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/encrypt
     "encryptionAlgorithm": "AES_GCM",
     "ciphertextDataIntegrityValueAlgorithm": "SHA_256"
 }
+```
 
 
 ### Response
 
+```
 {
     "authenticationTag": "vBxN2ncH1oEkR8WVXpmyYQ==",
     "ciphertext": "ghxkK1txeDNn3q8Y",
@@ -78,6 +86,7 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/encrypt
     "ciphertextMetadata": "a2V5X3ZlcnNpb249MQ==",
     "initializationVector": "HMrlRw85cAJUd5Ax"
 }
+```
 
 
 ## Decrypt -- xks_proxy_api_spec.md
@@ -87,6 +96,7 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/decrypt
 
 ### Request
 
+```
 {
     "requestMetadata": { 
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
@@ -102,12 +112,15 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/keys/<externalKeyId>/decrypt
     "initializationVector": "HMrlRw85cAJUd5Ax",
     "authenticationTag": "vBxN2ncH1oEkR8WVXpmyYQ=="
 }
+```
 
 ### Response
 
+```
 {
     "plaintext": "SGVsbG8gV29ybGQh"
 }
+```
 
 
 
@@ -120,15 +133,18 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/health
 
 ### Request
 
+```
 {
     "requestMetadata": {
         "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
         "kmsOperation": "CreateCustomKeyStore"
     }
 }
+```
 
 ### Response
 
+```
 {
     "xksProxyFleetSize": 2,
     "xksProxyVendor": "Acme Corp",
@@ -147,3 +163,4 @@ URI: https://<server>[/<path-prefix>]/kms/xks/v1/health
         }
     ]
 }
+```
