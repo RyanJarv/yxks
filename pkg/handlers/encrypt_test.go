@@ -21,10 +21,13 @@ func TestEncrypt(t *testing.T) {
 			args: args{
 				id: "1234abcd-12ab-34cd-56ef-1234567890ab",
 				req: EncryptRequest{
-					AuthenticationTag:            "vBxN2ncH1oEkR8WVXpmyYQ==",
-					Ciphertext:                   "ghxkK1txeDNn3q8Y",
-					CiphertextDataIntegrityValue: "qHA/ImC9h5HsLRXqCyPmWgYx7tzyoTplzILbP0fPXsc=",
-					CiphertextMetadata:           "a2V5X3ZlcnNpb249MQ==",
+					RequestMetadata: RequestMetadata{
+						AwsPrincipalArn: "arn:aws:iam::123456789012:user/Alice",
+						KmsKeyArn:       "arn:aws:kms:us-east-2:123456789012:/key/1234abcd-12ab-34cd-56ef-1234567890ab",
+						KmsOperation:    "Encrypt",
+						KmsRequestId:    "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
+						KmsViaService:   "ebs",
+					},
 				},
 			},
 			want: EncryptResponse{
