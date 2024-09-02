@@ -6,7 +6,7 @@ export XKS_PROXY_HOST="${local_ip}:8080"
 export SCHEME="http://"
 
 # Change this to the URI_PREFIX of a logical keystore supported by your XKS Proxy.
-export URI_PREFIX="example/uri/path/prefix"
+export URI_PREFIX="yxks"
 
 # Change this to the Access key ID for request authentication to your logical keystore.
 # Valid characters are a-z, A-Z, 0-9, /, - (hyphen), and _ (underscore)

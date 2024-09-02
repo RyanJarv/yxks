@@ -13,10 +13,12 @@ import (
 	"github.com/ryanjarv/yxks/pkg/utils"
 	"log"
 	"net/http"
+	"strings"
 )
 
 var (
-	debug = flag.Bool("debug", false, "Enable debug logging")
+	debug  = flag.Bool("debug", false, "Enable debug logging")
+	prefix = flag.String("prefix", "yxks", "Prefix for handlers")
 )
 
 func main() {
@@ -35,10 +37,17 @@ func RunServer(ctx utils.Context) error {
 		Addr:    ":8080",
 		Handler: router,
 	}
-	router.HandleFunc("/kms/xks/v1/health", handlers.HealthHandler)
-	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadataHandler)
-	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.EncryptHandler)
-	router.HandleFunc("/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.DecryptHandler)
+
+	if strings.HasPrefix(*prefix, "/") {
+		*prefix = "yxks"
+	} else {
+		*prefix = "/" + *prefix
+	}
+
+	router.HandleFunc(*prefix+"/kms/xks/v1/health", handlers.HealthHandler)
+	router.HandleFunc(*prefix+"/kms/xks/v1/keys/{externalKeyId}/metadata", handlers.GetKeyMetadataHandler)
+	router.HandleFunc(*prefix+"/kms/xks/v1/keys/{externalKeyId}/encrypt", handlers.EncryptHandler)
+	router.HandleFunc(*prefix+"/kms/xks/v1/keys/{externalKeyId}/decrypt", handlers.DecryptHandler)
 	router.HandleFunc("/", handlers.GetDefaultHandler(ctx))
 
 	return s.ListenAndServe()

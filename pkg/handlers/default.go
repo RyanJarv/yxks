@@ -17,7 +17,7 @@ func GetDefaultHandler(ctx utils.Context) http.HandlerFunc {
 			panic(err)
 		}
 
-		ctx.Info.Printf("Called default handler with: %s", body)
+		ctx.Info.Printf("default handler: %s %s %s", req.Method, req.URL.Path, body)
 		lo.Must(fmt.Fprintf(w, "Called default handler with: %s", body))
 	}
 }
