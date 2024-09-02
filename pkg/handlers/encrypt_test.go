@@ -21,13 +21,16 @@ func TestEncrypt(t *testing.T) {
 			args: args{
 				id: "1234abcd-12ab-34cd-56ef-1234567890ab",
 				req: EncryptRequest{
-					RequestMetadata: RequestMetadata{
+					RequestMetadata: EncryptRequestMetadata{
 						AwsPrincipalArn: "arn:aws:iam::123456789012:user/Alice",
 						KmsKeyArn:       "arn:aws:kms:us-east-2:123456789012:/key/1234abcd-12ab-34cd-56ef-1234567890ab",
 						KmsOperation:    "Encrypt",
 						KmsRequestId:    "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
 						KmsViaService:   "ebs",
 					},
+					AdditionalAuthenticatedData: "cHJvamVjdD1uaWxlLGRlcGFydG1lbnQ9bWFya2V0aW5n",
+					Plaintext:                   []byte("SGVsbG8gV29ybGQh"),
+					EncryptionAlgorithm:         "AES_GCM",
 				},
 			},
 			want: EncryptResponse{
@@ -44,11 +47,12 @@ func TestEncrypt(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Encrypt(tt.args.id, tt.args.req)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Encrypt() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Encrypt() error = %+v, wantErr %+v", err, tt.wantErr)
 				return
 			}
+
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Encrypt() got = %v, want %v", got, tt.want)
+				t.Errorf("Encrypt() got = %+v, want %+v", got, tt.want)
 			}
 		})
 	}

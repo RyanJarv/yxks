@@ -1,6 +1,12 @@
 package handlers
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/hmac"
+	"crypto/rand"
+	"crypto/sha256"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"github.com/ryanjarv/yxks/pkg/utils"
@@ -47,12 +53,45 @@ func encryptHandlerErr(w http.ResponseWriter, req *http.Request) error {
 	return nil
 }
 
-func Encrypt(id string, req EncryptRequest) (EncryptResponse, error) {
-	return EncryptResponse{
-		AuthenticationTag:            "vBxN2ncH1oEkR8WVXpmyYQ==",
-		Ciphertext:                   "ghxkK1txeDNn3q8Y",
-		CiphertextDataIntegrityValue: "qHA/ImC9h5HsLRXqCyPmWgYx7tzyoTplzILbP0fPXsc=",
-		CiphertextMetadata:           "a2V5X3ZlcnNpb249MQ==",
-		InitializationVector:         "HMrlRw85cAJUd5Ax",
-	}, nil
+// Encrypt function for the KMS XKS server
+func Encrypt(id string, req EncryptRequest) (*EncryptResponse, error) {
+	// Inline encryption key (this is just for demonstration, do not hardcode keys in production)
+	encryptionKey := []byte("thisisa32byteencryptionkey!!!!!!") // 32 bytes for AES-256
+
+	// Create AES cipher block
+	block, err := aes.NewCipher(encryptionKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate a random 12-byte initialization vector (IV) for AES-GCM
+	iv := make([]byte, 12) // 12 bytes for AES-GCM nonce size
+	if _, err := io.ReadFull(rand.Reader, iv); err != nil {
+		return nil, err
+	}
+
+	// Create AES-GCM cipher mode
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+
+	// Encrypt the plaintext
+	ciphertext := aesGCM.Seal(nil, iv, req.Plaintext, nil)
+
+	// Compute the data integrity value using HMAC-SHA256
+	h := hmac.New(sha256.New, encryptionKey)
+	h.Write(ciphertext)
+	dataIntegrityValue := h.Sum(nil)
+
+	// Create the EncryptResponse
+	response := &EncryptResponse{
+		AuthenticationTag:            base64.StdEncoding.EncodeToString(ciphertext[len(ciphertext)-aesGCM.Overhead():]),
+		Ciphertext:                   base64.StdEncoding.EncodeToString(ciphertext),
+		CiphertextDataIntegrityValue: base64.StdEncoding.EncodeToString(dataIntegrityValue),
+		CiphertextMetadata:           base64.StdEncoding.EncodeToString([]byte("key_version=1")), // Example metadata
+		InitializationVector:         base64.StdEncoding.EncodeToString(iv),
+	}
+
+	return response, nil
 }

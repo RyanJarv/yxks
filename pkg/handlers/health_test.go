@@ -1,64 +1,56 @@
 package handlers
 
 import (
-	"bytes"
-	"net/http"
-	"net/http/httptest"
+	"github.com/google/go-cmp/cmp"
 	"testing"
 )
 
-func TestHealthHandler(t *testing.T) {
+func TestHealth(t *testing.T) {
 	type args struct {
-		w   http.ResponseWriter
-		req *http.Request
+		req GetHealthStatusRequest
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantStatus int
-		wantResp   string
+		name    string
+		args    args
+		want    *GetHealthStatusResponse
+		wantErr bool
 	}{
 		{
-			name: "Test HealthHandler",
+			name: "Test Encrypt",
 			args: args{
-				w: httptest.NewRecorder(),
-				req: httptest.NewRequest(http.MethodPost, "/kms/xks/v1/health", bytes.NewBuffer([]byte(`{
-    "requestMetadata": {
-        "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
-        "kmsOperation": "CreateCustomKeyStore"
-    }
-}`))),
+				req: GetHealthStatusRequest{
+					RequestMetadata: HealthRequestMetadata{
+						KmsOperation: "GetHealthStatus",
+						KmsRequestId: "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
+					},
+				},
 			},
-			wantStatus: http.StatusOK,
-			wantResp: `{
-    "xksProxyFleetSize": 2,
-    "xksProxyVendor": "Acme Corp",
-    "xksProxyModel": "Acme XKS Proxy 1.0",
-    "ekmVendor": "Thales Group",
-    "ekmFleetDetails": [
-        {
-            "id": "hsm-id-1",
-            "model": "Luna 5.0",
-            "healthStatus": "DEGRADED"
-        },
-        {
-            "id": "hsm-id-2",
-            "model": "Luna 5.1",
-            "healthStatus": "ACTIVE"
-        }
-    ]
-}`,
+			want: &GetHealthStatusResponse{
+				XksProxyFleetSize: 2,
+				XksProxyVendor:    "Acme Corp",
+				XksProxyModel:     "Acme XKS Proxy 1.0",
+				EkmVendor:         "Thales Group",
+				EkmFleetDetails: []EkmFleetDetail{
+					{
+						Id:           "hsm-id-1",
+						Model:        "Luna 5.0",
+						HealthStatus: "DEGRADED",
+					},
+				},
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			HealthHandler(tt.args.w, tt.args.req)
-			if tt.args.w.(*httptest.ResponseRecorder).Code != tt.wantStatus {
-				t.Errorf("HealthHandler Status Code: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Code, tt.wantStatus)
+			got, err := Health(tt.args.req)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("Encrypt() error = %+v, wantErr %+v", err, tt.wantErr)
+				return
 			}
 
-			if tt.args.w.(*httptest.ResponseRecorder).Body.String() != tt.wantResp {
-				t.Errorf("HealthHandler Response: got %v, want %v", tt.args.w.(*httptest.ResponseRecorder).Body.String(), tt.wantResp)
+			if diff := cmp.Diff(got, tt.want); diff != "" {
+				t.Errorf("Encrypt() mismatch (-got +want):\n%s", diff)
 			}
 		})
 	}
