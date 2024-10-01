@@ -1,50 +1,33 @@
 package handlers
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
+	"github.com/ryanjarv/yxks/pkg/utils"
+	"log"
 	"net/http"
+	"slices"
 )
 
 // HealthHandler endpoint
 // URI: /kms/xks/v1/health
 func HealthHandler(w http.ResponseWriter, req *http.Request) {
-	err := healthHandlerErr(w, req)
-	if err != nil {
-		panic(err)
-	}
+	utils.H[GetHealthStatusRequest](w, req, func(t GetHealthStatusRequest) (any, error) {
+		log.Printf("[DEBUG] health handler called with: %s\n", utils.TryJson(t))
+
+		response, err := Health(t)
+		if err != nil {
+			log.Printf("[ERROR] error encrypting: %v", err)
+			return nil, err
+		}
+
+		return response, nil
+	})
 }
 
-func healthHandlerErr(w http.ResponseWriter, req *http.Request) error {
-	body, err := io.ReadAll(req.Body)
-	if err != nil {
-		return fmt.Errorf("error reading request body: %v", err)
+func Health(req GetHealthStatusRequest) (any, error) {
+	if slices.Contains(KmsOperations, req.RequestMetadata.KmsOperation) {
+		log.Printf("[ERROR] unknown KMS operation: %s\n", req.RequestMetadata.KmsOperation)
 	}
 
-	var encryptReq GetHealthStatusRequest
-	if err := json.Unmarshal(body, &encryptReq); err != nil {
-		return fmt.Errorf("error unmarshalling request body: %v", err)
-	}
-
-	response, err := Health(encryptReq)
-	if err != nil {
-		return fmt.Errorf("error encrypting: %v", err)
-	}
-
-	marshal, err := json.Marshal(response)
-	if err != nil {
-		return fmt.Errorf("error marshalling response: %v", err)
-	}
-
-	if _, err := w.Write(marshal); err != nil {
-		return fmt.Errorf("error writing response: %v", err)
-	}
-
-	return nil
-}
-
-func Health(req GetHealthStatusRequest) (*GetHealthStatusResponse, error) {
 	return &GetHealthStatusResponse{
 		XksProxyFleetSize: 2,
 		XksProxyVendor:    "Acme Corp",
@@ -54,7 +37,7 @@ func Health(req GetHealthStatusRequest) (*GetHealthStatusResponse, error) {
 			{
 				Id:           "hsm-id-1",
 				Model:        "Luna 5.0",
-				HealthStatus: "DEGRADED",
+				HealthStatus: HealthStatusACTIVE,
 			},
 		},
 	}, nil

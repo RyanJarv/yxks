@@ -29,7 +29,7 @@ func TestEncrypt(t *testing.T) {
 						KmsViaService:   "ebs",
 					},
 					AdditionalAuthenticatedData: "cHJvamVjdD1uaWxlLGRlcGFydG1lbnQ9bWFya2V0aW5n",
-					Plaintext:                   []byte("SGVsbG8gV29ybGQh"),
+					Plaintext:                   "SGVsbG8gV29ybGQh",
 					EncryptionAlgorithm:         "AES_GCM",
 				},
 			},

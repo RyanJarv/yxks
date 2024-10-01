@@ -6,14 +6,14 @@ package handlers
 //	{
 //	     "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
 //	     "kmsKeyArn": "arn:aws:kms:us-east-2:123456789012:/key/1234abcd-12ab-34cd-56ef-1234567890ab",
-//	     "kmsOperation": "Encrypt",
+//	     "KmsOperation": "Encrypt",
 //	     "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
 //	     "kmsViaService": "ebs"
 //	 }
 type EncryptRequestMetadata struct {
 	AwsPrincipalArn string `json:"awsPrincipalArn"`
 	KmsKeyArn       string `json:"kmsKeyArn"`
-	KmsOperation    string `json:"kmsOperation"`
+	KmsOperation    string `json:"KmsOperation"`
 	KmsRequestId    string `json:"kmsRequestId"`
 	KmsViaService   string `json:"kmsViaService"`
 }
@@ -31,7 +31,7 @@ type EncryptRequestMetadata struct {
 type EncryptRequest struct {
 	RequestMetadata                       EncryptRequestMetadata `json:"requestMetadata"`
 	AdditionalAuthenticatedData           string                 `json:"additionalAuthenticatedData"`
-	Plaintext                             []byte                 `json:"plaintext"`
+	Plaintext                             string                 `json:"plaintext"`
 	EncryptionAlgorithm                   string                 `json:"encryptionAlgorithm"`
 	CiphertextDataIntegrityValueAlgorithm string                 `json:"ciphertextDataIntegrityValueAlgorithm"`
 }
@@ -49,9 +49,25 @@ type EncryptRequest struct {
 type EncryptResponse struct {
 	AuthenticationTag            string `json:"authenticationTag"`
 	Ciphertext                   string `json:"ciphertext"`
-	CiphertextDataIntegrityValue string `json:"ciphertextDataIntegrityValue"`
-	CiphertextMetadata           string `json:"ciphertextMetadata"`
+	CiphertextDataIntegrityValue string `json:"ciphertextDataIntegrityValue,omitempty"`
+	CiphertextMetadata           string `json:"ciphertextMetadata,omitempty"`
 	InitializationVector         string `json:"initializationVector"`
+}
+
+type KmsOperation string
+
+const (
+	KmsOperationKmsHealthCheck        KmsOperation = "KmsHealthCheck"
+	KmsOperationCreateCustomKeyStore  KmsOperation = "CreateCustomKeyStore"
+	KmsOperationConnectCustomKeyStore KmsOperation = "ConnectCustomKeyStore"
+	KmsOperationUpdateCustomKeyStore  KmsOperation = "UpdateCustomKeyStore"
+)
+
+var KmsOperations = []KmsOperation{
+	KmsOperationKmsHealthCheck,
+	KmsOperationCreateCustomKeyStore,
+	KmsOperationConnectCustomKeyStore,
+	KmsOperationUpdateCustomKeyStore,
 }
 
 // HealthRequestMetadata represents the requestMetadata field in the GetHealthStatusRequest
@@ -59,11 +75,11 @@ type EncryptResponse struct {
 //
 //	{
 //	  "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
-//	  "kmsOperation": "CreateCustomKeyStore"
+//	  "KmsOperation": "CreateCustomKeyStore"
 //	}
 type HealthRequestMetadata struct {
-	KmsRequestId string `json:"kmsRequestId"`
-	KmsOperation string `json:"kmsOperation"`
+	KmsRequestId string       `json:"kmsRequestId"`
+	KmsOperation KmsOperation `json:"KmsOperation"`
 }
 
 // GetHealthStatusRequest represents the request body for the GetHealthStatus endpoint
@@ -72,12 +88,20 @@ type HealthRequestMetadata struct {
 //	{
 //	   "requestMetadata": {
 //	       "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
-//	       "kmsOperation": "CreateCustomKeyStore"
+//	       "KmsOperation": "CreateCustomKeyStore"
 //	   }
 //	}
 type GetHealthStatusRequest struct {
 	RequestMetadata HealthRequestMetadata `json:"requestMetadata"`
 }
+
+type HealthStatus string
+
+const (
+	HealthStatusACTIVE      HealthStatus = "ACTIVE"
+	HealthStatusDEGRADED    HealthStatus = "DEGRADED"
+	HealthStatusUNAVAILABLE HealthStatus = "UNAVAILABLE"
+)
 
 // EkmFleetDetail represents the EkmFleetDetail field in the GetHealthStatusResponse
 // Example:
@@ -88,9 +112,9 @@ type GetHealthStatusRequest struct {
 //	    "healthStatus": "DEGRADED"
 //	}
 type EkmFleetDetail struct {
-	Id           string `json:"id"`
-	Model        string `json:"model"`
-	HealthStatus string `json:"healthStatus"`
+	Id           string       `json:"id"`
+	Model        string       `json:"model"`
+	HealthStatus HealthStatus `json:"healthStatus"`
 }
 
 // GetHealthStatusResponse represents the response body for the GetHealthStatus endpoint
@@ -115,9 +139,9 @@ type EkmFleetDetail struct {
 //	   ]
 //	 }
 type GetHealthStatusResponse struct {
-	XksProxyFleetSize int              `json:"xksProxyFleetSize"`
-	XksProxyVendor    string           `json:"xksProxyVendor"`
-	XksProxyModel     string           `json:"xksProxyModel"`
-	EkmVendor         string           `json:"ekmVendor"`
-	EkmFleetDetails   []EkmFleetDetail `json:"ekmFleetDetails"`
+	XksProxyFleetSize int              `json:"xksProxyFleetSize,omitempty"`
+	XksProxyVendor    string           `json:"xksProxyVendor,omitempty"`
+	XksProxyModel     string           `json:"xksProxyModel,omitempty"`
+	EkmVendor         string           `json:"ekmVendor,omitempty"`
+	EkmFleetDetails   []EkmFleetDetail `json:"ekmFleetDetails,omitempty"`
 }

@@ -1,8 +1,11 @@
+#!/usr/bin/env bash
 # More environment variables in  aws-kms-xksproxy-test-client/utils/test_config.sh
+
+export PATH="/usr/local/homebrew/bin:$PATH"
 
 # Get the local IP address, probably on works on MacOS
 local_ip=$(ifconfig|grep 'inet '|grep 'broadcast'|awk '{print $2}')
-export XKS_PROXY_HOST="${local_ip}:8080"
+export XKS_PROXY_HOST="localhost:8080"
 export SCHEME="http://"
 
 # Change this to the URI_PREFIX of a logical keystore supported by your XKS Proxy.
@@ -25,4 +28,4 @@ cd "$current_dir/aws-kms-xksproxy-test-client"
 
 
 # Run the tests
-./test-xks-proxy-via-docker
+./test-xks-proxy

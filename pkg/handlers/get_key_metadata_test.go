@@ -25,7 +25,7 @@ func TestGetKeyMetadataHandler(t *testing.T) {
 				req: httptest.NewRequest(http.MethodPost, "/kms/xks/v1/health", bytes.NewBuffer([]byte(`{
     "requestMetadata": {
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
-        "kmsOperation": "CreateKey",
+        "KmsOperation": "CreateKey",
         "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae"
     }
 }`))),
@@ -35,7 +35,7 @@ func TestGetKeyMetadataHandler(t *testing.T) {
     "requestMetadata": {
         "awsPrincipalArn": "arn:aws:iam::123456789012:user/Alice",
         "kmsKeyArn": "arn:aws:kms:us-east-2:123456789012:/key/1234abcd-12ab-34cd-56ef-1234567890ab",
-        "kmsOperation": "Encrypt",
+        "KmsOperation": "Encrypt",
         "kmsRequestId": "4112f4d6-db54-4af4-ae30-c55a22a8dfae",
         "kmsViaService": "ebs"
     }, 
