@@ -6,9 +6,12 @@ here), but may be useful if you're interested in messing around with XKS.
 I just used ssh port forwarding on a public EC2 instance, this way I could test and debug live requests with a real
 certificate.
 
-TODO: Add some more documentation on how to use this.
+**TODO:** Add some more documentation on how to use this.
 
-NOTE: The rest of the documentation may be out of date.
+**NOTE:** The rest of the documentation may be out of date.
+
+**Important:** This is not meant for production use.
+
 
 ## Running tests
 
